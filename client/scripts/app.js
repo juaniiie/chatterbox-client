@@ -3,17 +3,32 @@
 var app = {
   init: function() {
     $(document).ready(function() {
-      $(document.body).find('#main').append(document.createElement('form'));
-      $('form').html('<textarea></textarea>');
-      $('form').append('<button></button>');
-      $('button').on('click', function()  {
+      
+      $('#submit').on('click', function()  {
         var message = {
           username: 'shawndrost',
           text: $('textarea').val(),
-          roomname: '4chan'
+          roomname: $('input').val()
         };
 
         app.send(message);
+        app.clearMessages();
+        app.fetch();
+        event.preventDefault();
+      });
+
+      $('#refresh').on('click', function() {
+        app.clearMessages();
+        app.fetch();
+        event.preventDefault();
+      });
+
+      $('#chatroom').on('click', function() { 
+        $('#chats').children().show();
+        app.displayChatroom($('select').val());
+        console.log('ad');
+        event.preventDefault();
+
       });
     });
   },
@@ -41,6 +56,7 @@ var app = {
       type: 'GET',
       success: function(data) {
         app.displayMessages(data);
+        app.displayChatroomsMenu(data);
         console.log(data['results']);
       },
       error: function(data) {
@@ -60,7 +76,25 @@ var app = {
 
   displayMessages: function(data) {
     data.results.forEach(function(userData) {
-      $(document.createElement('div')).text(userData['text']).appendTo($('#chats'));
+      $(document.createElement('div')).attr("roomname", userData.roomname).text("text:" + userData['text'] +"room:"+userData['roomname']).appendTo($('#chats'));
+    });
+  },
+
+  displayChatroomsMenu: function(data)  {
+    $('select').children().remove();
+    var rooms = _.uniq(_.map(data.results, function(userData){
+      return userData.roomname;
+    }));
+    _.each(rooms, function(room) {
+      $('select').append('<option value=' + room + '>' + room + '</option>');
+    }) 
+  },
+
+  displayChatroom: function(room) {  
+    _.each($('#chats').children(), function(div) {
+      if ($(div).attr("roomname") !== room) {
+        $(div).hide();
+      }
     });
   }
 };
