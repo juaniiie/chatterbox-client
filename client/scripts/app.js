@@ -1,8 +1,23 @@
 // YOUR CODE HERE:
 
 var app = {
-  init: function(argument) {
+  init: function() {
+    $(document).ready(function() {
+      $(document.body).find('#main').append(document.createElement('form'));
+      $('form').html('<textarea></textarea>');
+      $('form').append('<button></button>');
+      $('button').on('click', function()  {
+        var message = {
+          username: 'shawndrost',
+          text: $('textarea').val(),
+          roomname: '4chan'
+        };
+
+        app.send(message);
+      });
+    });
   },
+
   send: function(message) {
     $.ajax({
     // This is the url you should use to communicate with the parse API server.
@@ -38,15 +53,17 @@ var app = {
   },
 
   addMessage: function(message) {
-    $(document.createElement('div')).text(message).appendTo($('#chats'));
+    // $(document.createElement('div')).text(message).appendTo($('#chats'));
+    this.form
   },
 
 
   displayMessages: function(data) {
     data.results.forEach(function(userData) {
-      app.addMessage(userData['text']);
+      $(document.createElement('div')).text(userData['text']).appendTo($('#chats'));
     });
   }
 };
 
+app.init();
 app.fetch();
