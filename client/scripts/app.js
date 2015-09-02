@@ -6,7 +6,7 @@ var app = {
       
       $('#submit').on('click', function()  {
         var message = {
-          username: 'shawndrost',
+          username: location.search.split('').slice(10).join(''),
           text: $('textarea').val(),
           roomname: $('input').val()
         };
@@ -26,10 +26,16 @@ var app = {
       $('#chatroom').on('click', function() { 
         $('#chats').children().show();
         app.displayChatroom($('select').val());
-        console.log('ad');
         event.preventDefault();
-
       });
+
+      $('button').on('click', function() {
+        $('#chats').children().show();
+        app.displayFriends($(this));
+        event.preventDefault();
+      });
+
+      app.fetch();
     });
   },
 
@@ -68,15 +74,12 @@ var app = {
     $('#chats').children().remove();
   },
 
-  addMessage: function(message) {
-    // $(document.createElement('div')).text(message).appendTo($('#chats'));
-    this.form
-  },
-
-
   displayMessages: function(data) {
     data.results.forEach(function(userData) {
-      $(document.createElement('div')).attr("roomname", userData.roomname).text("text:" + userData['text'] +"room:"+userData['roomname']).appendTo($('#chats'));
+      $(document.createElement('div')).attr("roomname", userData.roomname)
+      .attr('username', userData.username)
+      .text("username: " + userData['username'] + " text:" + userData['text'] +
+        " room:"+userData['roomname']).appendTo($('#chats'));
     });
   },
 
@@ -96,8 +99,19 @@ var app = {
         $(div).hide();
       }
     });
-  }
+  },
+
+  // displayFriends: function()  {
+
+  //   $('#chats').children().forEach( function(div) {
+  //     $(div).append('<button></button>');
+
+  //     // on('click', function() {
+  //     //   // $('#chats').children().show();
+  //     //   if ($(div).attr("username") !== $(this).attr("username")) {
+  //     //     $(div).hide();
+  //   });
+  // }
 };
 
 app.init();
-app.fetch();
